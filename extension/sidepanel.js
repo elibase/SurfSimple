@@ -2,26 +2,31 @@
 // Voice session (ElevenLabs WebSocket) will be added here in Milestone 3.
 
 // ── DOM refs ──
-const summaryText   = document.getElementById('summaryText');
-const responseArea  = document.getElementById('responseArea');
-const spinner       = document.getElementById('spinner');
-const promptInput   = document.getElementById('promptInput');
-const askBtn        = document.getElementById('askBtn');
-const summariseBtn  = document.getElementById('summariseBtn');
-const micBtn        = document.getElementById('micBtn');
-const settingsBtn   = document.getElementById('settingsBtn');
-const errorBanner   = document.getElementById('errorBanner');
+const summaryText  = document.getElementById('summaryText');
+const responseArea = document.getElementById('responseArea');
+const spinner      = document.getElementById('spinner');
+const promptInput  = document.getElementById('promptInput');
+const askBtn       = document.getElementById('askBtn');
+const summariseBtn = document.getElementById('summariseBtn');
+const micBtn       = document.getElementById('micBtn');
+const settingsBtn  = document.getElementById('settingsBtn');
+const errorBanner  = document.getElementById('errorBanner');
+
+// ── Apply font size preference ──
+chrome.storage.local.get('fontSize', ({ fontSize }) => {
+  const sizes = { medium: '18px', large: '22px', xlarge: '26px' };
+  document.documentElement.style.setProperty('--font-base', sizes[fontSize] || '18px');
+});
 
 // ── Settings ──
-settingsBtn.addEventListener('click', () => {
-  chrome.runtime.openOptionsPage();
-});
+settingsBtn.addEventListener('click', () => chrome.runtime.openOptionsPage());
 
 // ── Summarise ──
 summariseBtn.addEventListener('click', () => {
   setLoading(true);
+  hideError();
   chrome.runtime.sendMessage({ type: 'SUMMARISE' });
-  // Result arrives via onMessage SUMMARY_RESULT
+  // Result arrives via SUMMARY_RESULT message
 });
 
 // ── Ask ──
@@ -40,20 +45,17 @@ function sendPrompt() {
   responseArea.textContent = '';
 
   chrome.runtime.sendMessage({ type: 'USER_PROMPT', prompt }, (response) => {
-    setLoading(false);
-    if (chrome.runtime.lastError) {
+    if (chrome.runtime.lastError || !response?.ok) {
+      setLoading(false);
       showError('Could not reach the assistant. Please try again.');
-      return;
     }
-    if (response?.answer) {
-      responseArea.textContent = response.answer;
-    }
+    // Answer arrives via PROMPT_RESULT message
   });
 }
 
-// ── Mic (stub for Milestone 1) ──
+// ── Mic (stub — Milestone 3) ──
 micBtn.addEventListener('click', () => {
-  responseArea.textContent = 'Voice input will be available soon. For now, type your question below.';
+  responseArea.textContent = 'Voice input will be available soon. Type your question below for now.';
 });
 
 // ── Background messages ──
@@ -64,8 +66,12 @@ chrome.runtime.onMessage.addListener((message) => {
       summaryText.textContent = message.summary;
       break;
 
+    case 'PROMPT_RESULT':
+      setLoading(false);
+      responseArea.textContent = message.answer;
+      break;
+
     case 'PAGE_CHANGED':
-      // Fresh page — reset displayed content
       summaryText.textContent = 'Press "Summarise this page" to get an overview.';
       responseArea.textContent = 'Ask a question below to get help navigating this page.';
       hideError();

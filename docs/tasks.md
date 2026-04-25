@@ -67,62 +67,62 @@ Progress key: `[ ]` Not started · `[~]` In progress · `[x]` Done · `[!]` Bloc
 
 ---
 
-## Milestone 2 — Proxy Server + Gemma AI Integration (Text Path)
+## Milestone 2 — Proxy Server + Gemma AI Integration (Text Path) ✓ Complete
 **Target: Weeks 3–4 | Goal: Gemma 4 summarisation and Q&A working end-to-end via text**
 
 ### 2.1 Gemma Proxy Server
-- [ ] Initialise `proxy/` as a Node.js project (`npm init`, add `.gitignore`)
-- [ ] Install dependencies: `express`, `@google-cloud/vertexai`, `express-rate-limit`, `dotenv`
-- [ ] Create `proxy/.env.example` documenting required vars: `GCP_PROJECT`, `GCP_LOCATION`, `GCP_SERVICE_ACCOUNT_KEY_PATH`, `PORT`, `SHARED_SECRET`
-- [ ] Create `proxy/auth.js` — middleware that reads `Authorization: Bearer <token>` header and rejects (401) if it doesn't match `process.env.SHARED_SECRET`
-- [ ] Create `proxy/vertexai.js`
-  - [ ] Initialise Vertex AI client using service account credentials from env
-  - [ ] `summarise(pageText)` — call Gemma 4 with summarisation prompt; return plain-text summary
-  - [ ] `ask(question, pageText, elementRegistry)` — call Gemma 4 with navigation Q&A prompt; return raw model text
-  - [ ] Chunk long `pageText` by heading sections before sending; stay within Gemma 4 context limit
-- [ ] Create `proxy/index.js`
-  - [ ] Apply `auth.js` middleware globally before all routes
-  - [ ] `POST /summarise` — accept `{ pageText }`; call `vertexai.summarise`; return `{ summary }`
-  - [ ] `POST /ask` — accept `{ question, pageText, elementRegistry }`; call `vertexai.ask`; parse `[HIGHLIGHT: "..."]` token; return `{ answer, highlightLabel }`
-  - [ ] `GET /health` — return `{ status: "ok" }` (no auth required)
-  - [ ] Apply `express-rate-limit` per IP as secondary defence
-  - [ ] Return user-friendly error JSON on Vertex AI failures (quota, auth, timeout)
+- [x] Initialise `proxy/` as a Node.js project (package.json, .gitignore)
+- [ ] Install dependencies — run `cd proxy && npm install` to install from package.json
+- [x] Create `proxy/.env.example` documenting required vars
+- [x] Create `proxy/auth.js` — Bearer token middleware, rejects 401 on missing/invalid token
+- [x] Create `proxy/vertexai.js`
+  - [x] Initialise Vertex AI client; uses ADC on Cloud Run, key file path for local dev
+  - [x] `summarise(pageText)` — Gemma 3 27B summarisation prompt; 4000-char page chunk
+  - [x] `ask(question, pageText, elementRegistry)` — navigation Q&A prompt; parses `[HIGHLIGHT]` token
+- [x] Create `proxy/index.js`
+  - [x] `auth.js` middleware applied globally before all routes
+  - [x] `POST /summarise` → `{ summary }`
+  - [x] `POST /ask` → `{ answer, highlightLabel }`
+  - [x] `GET /health` — no auth required
+  - [x] `express-rate-limit` per IP as secondary defence
+  - [x] User-friendly error JSON on Vertex AI failures (quota, auth, timeout)
+- [x] Create `proxy/Dockerfile` for Cloud Run deployment
 - [ ] Verify proxy runs locally: auth rejection with wrong token, valid response with correct token
 
 ### 2.2 Options Page — Settings Management
-- [ ] ElevenLabs API key input — save/load from `chrome.storage.local`
-- [ ] Voice speed slider (0.5×–2×) — save/load from `chrome.storage.local`
-- [ ] Toggle: auto-summarise on page load
-- [ ] Toggle: highlight elements automatically on navigation
-- [ ] Font size preference (Medium / Large / Extra Large)
-- [ ] "Save" confirmation toast
-- [ ] Advanced section (collapsed by default): proxy URL override field — pre-filled with operator constant from `gemmaProxy.js`; lets developers point at a local proxy instance
+- [x] ElevenLabs API key input — save/load from `chrome.storage.local`
+- [x] Voice speed slider (0.5×–2×) — save/load from `chrome.storage.local`
+- [x] Toggle: auto-summarise on page load
+- [x] Toggle: highlight elements automatically on navigation
+- [x] Font size preference (Medium / Large / Extra Large)
+- [x] "Save" confirmation toast
+- [x] Advanced section (collapsed by default): proxy URL override field
 
 ### 2.3 Extension Proxy Client
-- [ ] Create `extension/lib/gemmaProxy.js`
-  - [ ] Define `DEFAULT_PROXY_URL` and `SHARED_SECRET` as baked-in constants
-  - [ ] `summarise(pageText, proxyUrlOverride)` — POST to proxy `/summarise` with `Authorization: Bearer <SHARED_SECRET>`; return summary string
-  - [ ] `ask(question, pageText, elementRegistry, proxyUrlOverride)` — POST to proxy `/ask` with auth header; return `{ answer, highlightLabel }`
-  - [ ] Resolve effective URL: use `proxyUrlOverride` from storage if set, else `DEFAULT_PROXY_URL`
-  - [ ] Handle network errors, 401 (invalid token), and non-200 responses; return user-friendly error string
+- [x] Create `extension/lib/gemmaProxy.js`
+  - [x] `DEFAULT_PROXY_URL` and `SHARED_SECRET` as baked-in constants (set after Cloud Run deploy)
+  - [x] `summarise(pageText)` — POST to `/summarise` with Bearer auth
+  - [x] `ask(question, pageText, elementRegistry)` — POST to `/ask` with Bearer auth; returns `{ answer, highlightLabel }`
+  - [x] Resolves proxy URL: storage override → DEFAULT_PROXY_URL
+  - [x] Handles network errors, 401, 429, and non-200 responses with user-friendly strings
 
 ### 2.4 Background Worker — Gemma Routes
-- [ ] On `SUMMARISE` message: read proxy URL from storage → call `gemmaProxy.summarise` → send `SUMMARY_RESULT` to side panel
-- [ ] On `USER_PROMPT` message (text): call `gemmaProxy.ask` → send `PROMPT_RESULT` to side panel; if `highlightLabel` present dispatch highlight command to content script
-- [ ] Auto-summarise flow: on `REGISTRY_UPDATE` (new URL detected) check `autoSummarise` setting; if enabled trigger summarisation automatically
+- [x] `SUMMARISE` → `gemmaProxy.summarise` → `SUMMARY_RESULT` to side panel
+- [x] `USER_PROMPT` → `gemmaProxy.ask` → `PROMPT_RESULT` to side panel; dispatches highlight if `highlightLabel` present
+- [x] Auto-summarise: on new URL detected in `REGISTRY_UPDATE`, checks `autoSummarise` setting
 
 ### 2.5 Side Panel UI — Live AI Responses
-- [ ] Display `SUMMARY_RESULT` in summary section
-- [ ] Display `PROMPT_RESULT` answer in response area
-- [ ] Loading spinner while awaiting AI response
-- [ ] Error state banner for failed API calls (proxy unreachable, quota exceeded)
-- [ ] Apply font size preference from options to response text
+- [x] `SUMMARY_RESULT` displayed in summary section
+- [x] `PROMPT_RESULT` displayed in response area
+- [x] Loading spinner while awaiting AI response
+- [x] Error state banner for failed API calls
+- [x] Font size preference applied from `chrome.storage.local` on panel load
 
 ### 2.6 Highlight Integration (Text Path)
-- [ ] Content script receives highlight command with label string
-- [ ] Fuzzy-match label against registry `text` and `ariaLabel` fields (case-insensitive substring match, fallback to best partial match)
-- [ ] Call `highlighter.showHighlight(element, label)` on best match
-- [ ] If no match found, log warning and send `HIGHLIGHT_NOT_FOUND` back to side panel to show "couldn't find that element" message
+- [x] Content script receives `HIGHLIGHT` command with label string
+- [x] Fuzzy-match: exact → substring, case-insensitive
+- [x] `showHighlight(element, label)` called on best match
+- [x] `HIGHLIGHT_NOT_FOUND` sent back to side panel if no match
 
 ---
 
