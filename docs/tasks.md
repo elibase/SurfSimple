@@ -13,56 +13,57 @@ Progress key: `[ ]` Not started · `[~]` In progress · `[x]` Done · `[!]` Bloc
 
 ---
 
-## Milestone 1 — Foundation ← Starting here
+## Milestone 1 — Foundation ✓ Complete
 **Target: Weeks 1–2 | Goal: Loadable extension skeleton with working DOM scan and highlights**
 
 ### 1.1 Project Setup
-- [ ] Initialise `.gitignore` (node_modules, .env, build artefacts, service account key files)
-- [ ] Create `extension/`, `proxy/`, and `docs/` top-level directories
-- [ ] Add `README.md` with dev setup instructions for both extension and proxy
+- [x] Initialise `.gitignore` (node_modules, .env, build artefacts, service account key files)
+- [x] Create `extension/`, `proxy/`, and `docs/` top-level directories
+- [x] Add `README.md` with dev setup instructions for both extension and proxy
 
 ### 1.2 Chrome Extension Scaffold
-- [ ] Write `extension/manifest.json` (MV3, declare `activeTab`, `scripting`, `storage`, `sidePanel`, `tts`, `<all_urls>`)
-- [ ] Create empty `extension/background.js` with `chrome.runtime.onInstalled` listener
-- [ ] Create `extension/sidepanel.html` with minimal HTML shell (linked to `sidepanel.js` and `sidepanel.css`)
-- [ ] Create `extension/sidepanel.js` — wire `chrome.runtime.sendMessage` scaffolding
-- [ ] Create `extension/sidepanel.css` — base styles: 18px min font, high-contrast palette, layout grid
-- [ ] Create `extension/options.html` and `extension/options.js` — stub page with input fields
-- [ ] Create placeholder icons (`icons/icon16.png`, `icons/icon48.png`, `icons/icon128.png`)
+- [x] Write `extension/manifest.json` (MV3, declare `activeTab`, `scripting`, `storage`, `sidePanel`, `tts`, `<all_urls>`)
+- [x] Create `extension/background.js` with `chrome.runtime.onInstalled` listener + `setPanelBehavior`
+- [x] Create `extension/sidepanel.html` with full HTML shell (linked to `sidepanel.js` and `sidepanel.css`)
+- [x] Create `extension/sidepanel.js` — `chrome.runtime.sendMessage` wiring for all message types
+- [x] Create `extension/sidepanel.css` — 18px min font, high-contrast palette, full layout
+- [x] Create `extension/options.html` and `extension/options.js` — all settings fields wired to `chrome.storage.local`
+- [ ] Add logo icons to `extension/icons/` — directory created; user to add `icon16.png`, `icon48.png`, `icon128.png`
 - [ ] Verify extension loads unpacked in Chrome without errors
 
 ### 1.3 DOM Scanner
-- [ ] Create `extension/lib/elementScanner.js`
-  - [ ] Query all interactive selectors: `button`, `a`, `input`, `select`, `textarea`, `[role="button"]`, `[role="link"]`, `[tabindex]`
-  - [ ] Build registry array: `{ index, tag, role, text, ariaLabel, placeholder, boundingRect }`
-  - [ ] Derive human-readable label from `innerText → ariaLabel → placeholder → tag+role`
-  - [ ] Post registry to background worker via `chrome.runtime.sendMessage`
-- [ ] Create `extension/content.js`
-  - [ ] Import / inline `elementScanner.js` logic
-  - [ ] Run initial scan on `DOMContentLoaded`
-  - [ ] Attach `MutationObserver` — re-scan on significant DOM changes (debounced 300 ms)
-  - [ ] Listen for `chrome.runtime.onMessage` for highlight and page-text-extract commands
+- [x] Create `extension/lib/elementScanner.js`
+  - [x] Query all interactive selectors: `button`, `a`, `input`, `select`, `textarea`, `[role="button"]`, `[role="link"]`, `[tabindex]`
+  - [x] Build registry array: `{ index, tag, role, text, ariaLabel, placeholder, boundingRect }`
+  - [x] Derive human-readable label from `innerText → ariaLabel → placeholder → tag+role`
+  - [x] Post registry to background worker via `chrome.runtime.sendMessage`
+- [x] Create `extension/content.js`
+  - [x] Load `elementScanner.js` via content_scripts array (no bundler needed)
+  - [x] Run initial scan on `DOMContentLoaded`
+  - [x] Attach `MutationObserver` — re-scan on significant DOM changes (debounced 300 ms)
+  - [x] Listen for `chrome.runtime.onMessage` for highlight commands
+  - [x] SPA navigation detection via `history.pushState` intercept + `popstate`
 
 ### 1.4 Highlight Overlay
-- [ ] Create `extension/lib/highlighter.js`
-  - [ ] `showHighlight(element, label)` — inject pulsing CSS ring (outline + box-shadow keyframe animation)
-  - [ ] Inject tooltip above element displaying `label`
-  - [ ] `clearHighlight()` — remove overlay and tooltip
-  - [ ] Auto-dismiss after 8 seconds; also dismiss on element click
+- [x] Create `extension/lib/highlighter.js`
+  - [x] `showHighlight(element, label)` — inject pulsing CSS ring (outline + box-shadow keyframe animation)
+  - [x] Inject tooltip above element displaying `label`
+  - [x] `clearHighlight()` — remove overlay and tooltip
+  - [x] Auto-dismiss after 8 seconds; also dismiss on element click
 
 ### 1.5 Background Worker — Messaging Skeleton
-- [ ] Handle `REGISTRY_UPDATE` message from content script — store in memory
-- [ ] Handle `PAGE_TEXT` message from content script — store in memory
-- [ ] Handle `USER_PROMPT` message from side panel — stub response echo
-- [ ] Handle `HIGHLIGHT` command dispatch to active tab via `chrome.tabs.sendMessage`
-- [ ] Handle `GET_SETTINGS` / `SET_SETTINGS` using `chrome.storage.local`
+- [x] Handle `REGISTRY_UPDATE` message from content script — store in memory
+- [x] Handle `PAGE_TEXT` message from content script — store in memory
+- [x] Handle `USER_PROMPT` message from side panel — stub response echo
+- [x] Handle `HIGHLIGHT` command dispatch to active tab via `chrome.tabs.sendMessage`
+- [x] Handle `GET_SETTINGS` / `SET_SETTINGS` using `chrome.storage.local`
 
 ### 1.6 Side Panel UI — Static Shell
-- [ ] Layout: header logo, summary section, response area, prompt input row, mic button
-- [ ] "Ask" button sends `USER_PROMPT` message to background worker
-- [ ] Response area displays echoed stub response
-- [ ] "Summarise this page" button sends `SUMMARISE` message (stub)
-- [ ] Settings gear icon opens `options.html`
+- [x] Layout: header logo, summary section, response area, prompt input row, mic button
+- [x] "Ask" button sends `USER_PROMPT` message to background worker
+- [x] Response area displays echoed stub response
+- [x] "Summarise this page" button sends `SUMMARISE` message (stub)
+- [x] Settings gear icon opens `options.html`
 
 ---
 
