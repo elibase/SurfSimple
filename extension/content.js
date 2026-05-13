@@ -10,6 +10,12 @@ let _lastUrl = location.href;
 // --- Message handler ---
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if (message.type === 'CLEAR_HIGHLIGHT') {
+    clearHighlight();
+    sendResponse({ ok: true });
+    return;
+  }
+
   if (message.type !== 'HIGHLIGHT') return;
 
   const el = _findElement(message.label);
@@ -19,7 +25,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     sendResponse({ found: true });
   } else {
     sendResponse({ found: false });
-    chrome.runtime.sendMessage({ type: 'HIGHLIGHT_NOT_FOUND', label: message.label }).catch(() => {});
+    _safeSend({ type: 'HIGHLIGHT_NOT_FOUND', label: message.label });
   }
 });
 
@@ -45,18 +51,24 @@ function _findElement(label) {
   return null;
 }
 
+// --- Safe send — swallows both sync throws and async rejections ---
+// chrome.runtime.sendMessage throws synchronously when the extension context
+// is invalidated (e.g. after a reload), so .catch() alone is not enough.
+
+function _safeSend(message) {
+  try {
+    chrome.runtime.sendMessage(message).catch(() => {});
+  } catch {
+    // Context invalidated — content script will be replaced on next navigation
+  }
+}
+
 // --- Registry posting ---
 
 function _postRegistry() {
   const registry = buildRegistry();
   const text = extractPageText();
-
-  chrome.runtime.sendMessage({
-    type: 'REGISTRY_UPDATE',
-    registry,
-    pageText: text,
-    url: location.href,
-  }).catch(() => {});
+  _safeSend({ type: 'REGISTRY_UPDATE', registry, pageText: text, url: location.href });
 }
 
 // --- SPA navigation & DOM mutation ---

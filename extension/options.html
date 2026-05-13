@@ -122,6 +122,20 @@
     .btn-save:hover { background: var(--color-primary-dark); }
     .btn-save:focus-visible { outline: 3px solid var(--color-primary); outline-offset: 3px; }
 
+    .btn-preview {
+      margin-left: 10px;
+      padding: 10px 18px;
+      font-size: 1rem;
+      font-weight: 600;
+      background: transparent;
+      color: var(--color-primary);
+      border: 2px solid var(--color-primary);
+      border-radius: var(--radius);
+      cursor: pointer;
+    }
+    .btn-preview:hover { background: #e8f0fc; }
+    .voice-row { display: flex; align-items: center; }
+
     .toast {
       display: none;
       margin-top: 14px;
@@ -199,6 +213,23 @@
         <input type="checkbox" id="highlightOnNav" />
         <label for="highlightOnNav">Highlight interactive elements on new pages</label>
       </div>
+    </div>
+
+    <hr />
+
+    <div class="field">
+      <label for="voiceId">Assistant Voice</label>
+      <div class="voice-row">
+        <select id="voiceId">
+          <option value="21m00Tcm4TlvDq8ikWAM">Rachel (Calm, Female)</option>
+          <option value="ThT5KcBeYPX3keUQqHPh">Dorothy (Warm, Female)</option>
+          <option value="TxGEqnHWrfWFTfGW9XjX">Josh (Friendly, Male)</option>
+          <option value="pNInz6obpgDQGcFmaJgB">Adam (Clear, Male)</option>
+          <option value="EXAVITQu4vr4xnSDxMaL">Bella (Soft, Female)</option>
+        </select>
+        <button class="btn-preview" id="previewBtn">Preview</button>
+      </div>
+      <p class="hint">Requires your ElevenLabs API key to be saved first.</p>
     </div>
 
     <hr />

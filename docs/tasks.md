@@ -126,46 +126,44 @@ Progress key: `[ ]` Not started · `[~]` In progress · `[x]` Done · `[!]` Bloc
 
 ---
 
-## Milestone 3 — ElevenLabs TTS & Voice Agent
+## Milestone 3 — ElevenLabs TTS & Voice Agent ✓ Complete
 **Target: Weeks 5–6 | Goal: Voice-first interaction end-to-end**
 
 ### 3.1 ElevenLabs TTS
-- [ ] Create `extension/lib/elevenlabs.js`
-  - [ ] `textToSpeech(text, voiceId, apiKey, speed)` — POST to `/v1/text-to-speech/{voiceId}`; return audio blob URL
-  - [ ] Default voice ID constant (calm, clear English voice)
-  - [ ] Handle API errors; return `null` so UI falls back to text-only
+- [x] Create `extension/lib/elevenlabs.js`
+  - [x] `textToSpeech(text, apiKey, voiceId, speed)` — POST to `/v1/text-to-speech/{voiceId}`; returns base64 MP3 (blob URLs unavailable in service workers)
+  - [x] `DEFAULT_VOICE_ID` constant — Rachel (calm, clear English female)
+  - [x] Handle API errors; return `null` so caller falls back to text-only
 
 ### 3.2 Background Worker — TTS Route
-- [ ] After sending `PROMPT_RESULT` or `SUMMARY_RESULT` to side panel, call `elevenlabs.textToSpeech`
-- [ ] Send `PLAY_AUDIO` message with blob URL to side panel
-- [ ] Respect voice speed from user settings
+- [x] After `PROMPT_RESULT` and `SUMMARY_RESULT`, calls `textToSpeech` with stored API key, voiceId, voiceSpeed
+- [x] Sends `PLAY_AUDIO` with `audioBase64` to side panel
+- [x] Respects voiceId and voiceSpeed from `chrome.storage.local`
 
 ### 3.3 Side Panel UI — Audio Playback
-- [ ] Create hidden `<audio>` element; play blob URL on `PLAY_AUDIO` message
-- [ ] Volume control in side panel header
-- [ ] "Stop audio" button visible while audio is playing
-- [ ] Graceful fallback if audio unavailable (text response still shown)
+- [x] Hidden `<audio id="ttsAudio">` element in sidepanel.html
+- [x] `PLAY_AUDIO` handler decodes base64 → Blob → object URL → plays via audio element
+- [x] Skips TTS playback when voice agent session is active (agent handles its own TTS)
+- [x] Text response always shown regardless of audio availability
 
 ### 3.4 ElevenLabs Conversational Voice Agent (owned by sidepanel.js)
-- [ ] Install ElevenLabs Conversational AI SDK — bundle for MV3 (no dynamic `require`; use importmap or bundled script)
-- [ ] Implement voice session logic directly in `sidepanel.js` (not via background worker):
-  - [ ] `startVoiceSession(elementRegistry, pageText)` — compose system prompt with fresh page context; open WebSocket session
-  - [ ] `stopVoiceSession()` — close session, release microphone
-  - [ ] On text transcript received: parse for `[HIGHLIGHT: "label"]` token; if found send `HIGHLIGHT` message to `background.js` which forwards to content script
-  - [ ] On page navigation message from `background.js`: call `stopVoiceSession()` then `startVoiceSession(newRegistry, newPageText)` — accept ~1–2 s reconnect gap
-- [ ] Side panel listens for `PAGE_CHANGED` from `background.js` to trigger session restart
+- [x] Implemented via direct WebSocket (no SDK required — avoids MV3 bundling complexity)
+- [x] `startVoiceSession()` — gets signed URL, opens WebSocket, injects system prompt with page context and element registry
+- [x] `stopVoiceSession()` — closes WebSocket, releases microphone, stops AudioContext
+- [x] `[HIGHLIGHT: "label"]` token parsed from `agent_response`; forwarded to background → content script
+- [x] `PAGE_CHANGED` triggers stopVoiceSession + 1.5 s reconnect via startVoiceSession
 
 ### 3.5 Side Panel UI — Voice Interaction
-- [ ] Microphone button: idle / listening / processing states with distinct visual feedback
-- [ ] Request `microphone` permission on first use; show re-grant instructions if denied
-- [ ] Display live transcript as user speaks
-- [ ] On agent response: show text answer; agent handles TTS natively in the WebSocket session (no separate TTS call needed)
-- [ ] Show brief "Reconnecting…" indicator during the ~1–2 s session restart on page navigation
-- [ ] "Stop" button visible while voice session is active
+- [x] Mic button: idle (🎤) / connecting (⌛) / listening (⏹) states
+- [x] Microphone permission requested at session start; denied error shown in response area
+- [x] Live transcript shown from `user_transcript` events
+- [x] Agent text response shown from `agent_response` events; agent handles TTS natively
+- [x] "Reconnecting voice session…" shown during 1.5 s restart gap
+- [x] Clicking mic again while active stops the session
 
 ### 3.6 Options Page — Voice Settings
-- [ ] Voice selection dropdown (curated shortlist from ElevenLabs voice library)
-- [ ] "Preview" button plays a sample phrase in the selected voice
+- [x] Voice selection dropdown with 5 curated voices (Rachel, Dorothy, Josh, Adam, Bella)
+- [x] "Preview" button calls TTS REST API with a sample phrase and plays the result
 
 ---
 

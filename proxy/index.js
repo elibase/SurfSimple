@@ -8,7 +8,17 @@ const { summarise, ask } = require('./vertexai');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+function log(level, event, data = {}) {
+  console.log(JSON.stringify({ ts: new Date().toISOString(), level, event, ...data }));
+}
+
 app.use(express.json({ limit: '1mb' }));
+
+// Request logging — no page content logged, only method/path/ip
+app.use((req, _res, next) => {
+  log('info', 'request', { method: req.method, path: req.path, ip: req.ip });
+  next();
+});
 
 // Health check — no auth, used by Cloud Run health probes
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
@@ -33,7 +43,7 @@ app.post('/summarise', async (req, res) => {
     const summary = await summarise(pageText);
     res.json({ summary });
   } catch (err) {
-    console.error('POST /summarise error:', err);
+    log('error', 'summarise_error', { message: err.message, code: err.status || err.code });
     const { status, message } = mapVertexError(err);
     res.status(status).json({ error: message });
   }
@@ -47,7 +57,7 @@ app.post('/ask', async (req, res) => {
     const result = await ask(question, pageText || '', elementRegistry || []);
     res.json(result);
   } catch (err) {
-    console.error('POST /ask error:', err);
+    log('error', 'ask_error', { message: err.message, code: err.status || err.code });
     const { status, message } = mapVertexError(err);
     res.status(status).json({ error: message });
   }
@@ -61,5 +71,5 @@ function mapVertexError(err) {
 }
 
 app.listen(PORT, () => {
-  console.log(`SurfSimple proxy listening on port ${PORT}`);
+  log('info', 'server_start', { port: PORT });
 });
