@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SurfSimple</title>
+  <link rel="stylesheet" href="sidepanel.css" />
+</head>
+<body>
+  <header class="sp-header">
+    <img src="icons/logo.png" alt="SurfSimple" class="sp-logo" />
+    <h1 class="sp-title">SurfSimple</h1>
+    <button class="sp-icon-btn" id="settingsBtn" aria-label="Open settings" title="Settings">
+      &#9881;
+    </button>
+  </header>
+
+  <div class="sp-error-banner" id="errorBanner" role="alert" aria-live="assertive"></div>
+
+  <section class="sp-summary-section" aria-label="Page summary">
+    <h2 class="sp-section-label">Page Summary</h2>
+    <div class="sp-summary-text" id="summaryText">
+      Press "Summarise this page" to get an overview.
+    </div>
+    <button class="sp-btn sp-btn-outline" id="summariseBtn">Summarise this page</button>
+  </section>
+
+  <section class="sp-response-section" aria-label="Assistant response">
+    <h2 class="sp-section-label">Assistant</h2>
+    <div class="sp-response-area" id="responseArea" aria-live="polite">
+      Ask a question below to get help navigating this page.
+    </div>
+  </section>
+
+  <div class="sp-spinner hidden" id="spinner" role="status" aria-label="Loading">
+    <div class="sp-spinner-ring"></div>
+  </div>
+
+  <footer class="sp-input-row">
+    <input
+      class="sp-input"
+      id="promptInput"
+      type="text"
+      placeholder="Ask something…"
+      aria-label="Your question"
+      autocomplete="off"
+    />
+    <button class="sp-btn sp-btn-primary" id="askBtn">Ask</button>
+    <button class="sp-icon-btn sp-mic-btn" id="micBtn" aria-label="Start voice input" title="Voice input">
+      &#127908;
+    </button>
+  </footer>
+
+  <audio id="ttsAudio" style="display:none" aria-hidden="true"></audio>
+
+  <script type="module" src="sidepanel.js"></script>
+</body>
+</html>

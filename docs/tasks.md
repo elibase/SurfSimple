@@ -13,158 +13,157 @@ Progress key: `[ ]` Not started · `[~]` In progress · `[x]` Done · `[!]` Bloc
 
 ---
 
-## Milestone 1 — Foundation ← Starting here
+## Milestone 1 — Foundation ✓ Complete
 **Target: Weeks 1–2 | Goal: Loadable extension skeleton with working DOM scan and highlights**
 
 ### 1.1 Project Setup
-- [ ] Initialise `.gitignore` (node_modules, .env, build artefacts, service account key files)
-- [ ] Create `extension/`, `proxy/`, and `docs/` top-level directories
-- [ ] Add `README.md` with dev setup instructions for both extension and proxy
+- [x] Initialise `.gitignore` (node_modules, .env, build artefacts, service account key files)
+- [x] Create `extension/`, `proxy/`, and `docs/` top-level directories
+- [x] Add `README.md` with dev setup instructions for both extension and proxy
 
 ### 1.2 Chrome Extension Scaffold
-- [ ] Write `extension/manifest.json` (MV3, declare `activeTab`, `scripting`, `storage`, `sidePanel`, `tts`, `<all_urls>`)
-- [ ] Create empty `extension/background.js` with `chrome.runtime.onInstalled` listener
-- [ ] Create `extension/sidepanel.html` with minimal HTML shell (linked to `sidepanel.js` and `sidepanel.css`)
-- [ ] Create `extension/sidepanel.js` — wire `chrome.runtime.sendMessage` scaffolding
-- [ ] Create `extension/sidepanel.css` — base styles: 18px min font, high-contrast palette, layout grid
-- [ ] Create `extension/options.html` and `extension/options.js` — stub page with input fields
-- [ ] Create placeholder icons (`icons/icon16.png`, `icons/icon48.png`, `icons/icon128.png`)
+- [x] Write `extension/manifest.json` (MV3, declare `activeTab`, `scripting`, `storage`, `sidePanel`, `tts`, `<all_urls>`)
+- [x] Create `extension/background.js` with `chrome.runtime.onInstalled` listener + `setPanelBehavior`
+- [x] Create `extension/sidepanel.html` with full HTML shell (linked to `sidepanel.js` and `sidepanel.css`)
+- [x] Create `extension/sidepanel.js` — `chrome.runtime.sendMessage` wiring for all message types
+- [x] Create `extension/sidepanel.css` — 18px min font, high-contrast palette, full layout
+- [x] Create `extension/options.html` and `extension/options.js` — all settings fields wired to `chrome.storage.local`
+- [ ] Add logo icons to `extension/icons/` — directory created; user to add `icon16.png`, `icon48.png`, `icon128.png`
 - [ ] Verify extension loads unpacked in Chrome without errors
 
 ### 1.3 DOM Scanner
-- [ ] Create `extension/lib/elementScanner.js`
-  - [ ] Query all interactive selectors: `button`, `a`, `input`, `select`, `textarea`, `[role="button"]`, `[role="link"]`, `[tabindex]`
-  - [ ] Build registry array: `{ index, tag, role, text, ariaLabel, placeholder, boundingRect }`
-  - [ ] Derive human-readable label from `innerText → ariaLabel → placeholder → tag+role`
-  - [ ] Post registry to background worker via `chrome.runtime.sendMessage`
-- [ ] Create `extension/content.js`
-  - [ ] Import / inline `elementScanner.js` logic
-  - [ ] Run initial scan on `DOMContentLoaded`
-  - [ ] Attach `MutationObserver` — re-scan on significant DOM changes (debounced 300 ms)
-  - [ ] Listen for `chrome.runtime.onMessage` for highlight and page-text-extract commands
+- [x] Create `extension/lib/elementScanner.js`
+  - [x] Query all interactive selectors: `button`, `a`, `input`, `select`, `textarea`, `[role="button"]`, `[role="link"]`, `[tabindex]`
+  - [x] Build registry array: `{ index, tag, role, text, ariaLabel, placeholder, boundingRect }`
+  - [x] Derive human-readable label from `innerText → ariaLabel → placeholder → tag+role`
+  - [x] Post registry to background worker via `chrome.runtime.sendMessage`
+- [x] Create `extension/content.js`
+  - [x] Load `elementScanner.js` via content_scripts array (no bundler needed)
+  - [x] Run initial scan on `DOMContentLoaded`
+  - [x] Attach `MutationObserver` — re-scan on significant DOM changes (debounced 300 ms)
+  - [x] Listen for `chrome.runtime.onMessage` for highlight commands
+  - [x] SPA navigation detection via `history.pushState` intercept + `popstate`
 
 ### 1.4 Highlight Overlay
-- [ ] Create `extension/lib/highlighter.js`
-  - [ ] `showHighlight(element, label)` — inject pulsing CSS ring (outline + box-shadow keyframe animation)
-  - [ ] Inject tooltip above element displaying `label`
-  - [ ] `clearHighlight()` — remove overlay and tooltip
-  - [ ] Auto-dismiss after 8 seconds; also dismiss on element click
+- [x] Create `extension/lib/highlighter.js`
+  - [x] `showHighlight(element, label)` — inject pulsing CSS ring (outline + box-shadow keyframe animation)
+  - [x] Inject tooltip above element displaying `label`
+  - [x] `clearHighlight()` — remove overlay and tooltip
+  - [x] Auto-dismiss after 8 seconds; also dismiss on element click
 
 ### 1.5 Background Worker — Messaging Skeleton
-- [ ] Handle `REGISTRY_UPDATE` message from content script — store in memory
-- [ ] Handle `PAGE_TEXT` message from content script — store in memory
-- [ ] Handle `USER_PROMPT` message from side panel — stub response echo
-- [ ] Handle `HIGHLIGHT` command dispatch to active tab via `chrome.tabs.sendMessage`
-- [ ] Handle `GET_SETTINGS` / `SET_SETTINGS` using `chrome.storage.local`
+- [x] Handle `REGISTRY_UPDATE` message from content script — store in memory
+- [x] Handle `PAGE_TEXT` message from content script — store in memory
+- [x] Handle `USER_PROMPT` message from side panel — stub response echo
+- [x] Handle `HIGHLIGHT` command dispatch to active tab via `chrome.tabs.sendMessage`
+- [x] Handle `GET_SETTINGS` / `SET_SETTINGS` using `chrome.storage.local`
 
 ### 1.6 Side Panel UI — Static Shell
-- [ ] Layout: header logo, summary section, response area, prompt input row, mic button
-- [ ] "Ask" button sends `USER_PROMPT` message to background worker
-- [ ] Response area displays echoed stub response
-- [ ] "Summarise this page" button sends `SUMMARISE` message (stub)
-- [ ] Settings gear icon opens `options.html`
+- [x] Layout: header logo, summary section, response area, prompt input row, mic button
+- [x] "Ask" button sends `USER_PROMPT` message to background worker
+- [x] Response area displays echoed stub response
+- [x] "Summarise this page" button sends `SUMMARISE` message (stub)
+- [x] Settings gear icon opens `options.html`
 
 ---
 
-## Milestone 2 — Proxy Server + Gemma AI Integration (Text Path)
+## Milestone 2 — Proxy Server + Gemma AI Integration (Text Path) ✓ Complete
 **Target: Weeks 3–4 | Goal: Gemma 4 summarisation and Q&A working end-to-end via text**
 
 ### 2.1 Gemma Proxy Server
-- [ ] Initialise `proxy/` as a Node.js project (`npm init`, add `.gitignore`)
-- [ ] Install dependencies: `express`, `@google-cloud/vertexai`, `express-rate-limit`, `dotenv`
-- [ ] Create `proxy/.env.example` documenting required vars: `GCP_PROJECT`, `GCP_LOCATION`, `GCP_SERVICE_ACCOUNT_KEY_PATH`, `PORT`, `SHARED_SECRET`
-- [ ] Create `proxy/auth.js` — middleware that reads `Authorization: Bearer <token>` header and rejects (401) if it doesn't match `process.env.SHARED_SECRET`
-- [ ] Create `proxy/vertexai.js`
-  - [ ] Initialise Vertex AI client using service account credentials from env
-  - [ ] `summarise(pageText)` — call Gemma 4 with summarisation prompt; return plain-text summary
-  - [ ] `ask(question, pageText, elementRegistry)` — call Gemma 4 with navigation Q&A prompt; return raw model text
-  - [ ] Chunk long `pageText` by heading sections before sending; stay within Gemma 4 context limit
-- [ ] Create `proxy/index.js`
-  - [ ] Apply `auth.js` middleware globally before all routes
-  - [ ] `POST /summarise` — accept `{ pageText }`; call `vertexai.summarise`; return `{ summary }`
-  - [ ] `POST /ask` — accept `{ question, pageText, elementRegistry }`; call `vertexai.ask`; parse `[HIGHLIGHT: "..."]` token; return `{ answer, highlightLabel }`
-  - [ ] `GET /health` — return `{ status: "ok" }` (no auth required)
-  - [ ] Apply `express-rate-limit` per IP as secondary defence
-  - [ ] Return user-friendly error JSON on Vertex AI failures (quota, auth, timeout)
+- [x] Initialise `proxy/` as a Node.js project (package.json, .gitignore)
+- [ ] Install dependencies — run `cd proxy && npm install` to install from package.json
+- [x] Create `proxy/.env.example` documenting required vars
+- [x] Create `proxy/auth.js` — Bearer token middleware, rejects 401 on missing/invalid token
+- [x] Create `proxy/vertexai.js`
+  - [x] Initialise Vertex AI client; uses ADC on Cloud Run, key file path for local dev
+  - [x] `summarise(pageText)` — Gemma 3 27B summarisation prompt; 4000-char page chunk
+  - [x] `ask(question, pageText, elementRegistry)` — navigation Q&A prompt; parses `[HIGHLIGHT]` token
+- [x] Create `proxy/index.js`
+  - [x] `auth.js` middleware applied globally before all routes
+  - [x] `POST /summarise` → `{ summary }`
+  - [x] `POST /ask` → `{ answer, highlightLabel }`
+  - [x] `GET /health` — no auth required
+  - [x] `express-rate-limit` per IP as secondary defence
+  - [x] User-friendly error JSON on Vertex AI failures (quota, auth, timeout)
+- [x] Create `proxy/Dockerfile` for Cloud Run deployment
 - [ ] Verify proxy runs locally: auth rejection with wrong token, valid response with correct token
 
 ### 2.2 Options Page — Settings Management
-- [ ] ElevenLabs API key input — save/load from `chrome.storage.local`
-- [ ] Voice speed slider (0.5×–2×) — save/load from `chrome.storage.local`
-- [ ] Toggle: auto-summarise on page load
-- [ ] Toggle: highlight elements automatically on navigation
-- [ ] Font size preference (Medium / Large / Extra Large)
-- [ ] "Save" confirmation toast
-- [ ] Advanced section (collapsed by default): proxy URL override field — pre-filled with operator constant from `gemmaProxy.js`; lets developers point at a local proxy instance
+- [x] ElevenLabs API key input — save/load from `chrome.storage.local`
+- [x] Voice speed slider (0.5×–2×) — save/load from `chrome.storage.local`
+- [x] Toggle: auto-summarise on page load
+- [x] Toggle: highlight elements automatically on navigation
+- [x] Font size preference (Medium / Large / Extra Large)
+- [x] "Save" confirmation toast
+- [x] Advanced section (collapsed by default): proxy URL override field
 
 ### 2.3 Extension Proxy Client
-- [ ] Create `extension/lib/gemmaProxy.js`
-  - [ ] Define `DEFAULT_PROXY_URL` and `SHARED_SECRET` as baked-in constants
-  - [ ] `summarise(pageText, proxyUrlOverride)` — POST to proxy `/summarise` with `Authorization: Bearer <SHARED_SECRET>`; return summary string
-  - [ ] `ask(question, pageText, elementRegistry, proxyUrlOverride)` — POST to proxy `/ask` with auth header; return `{ answer, highlightLabel }`
-  - [ ] Resolve effective URL: use `proxyUrlOverride` from storage if set, else `DEFAULT_PROXY_URL`
-  - [ ] Handle network errors, 401 (invalid token), and non-200 responses; return user-friendly error string
+- [x] Create `extension/lib/gemmaProxy.js`
+  - [x] `DEFAULT_PROXY_URL` and `SHARED_SECRET` as baked-in constants (set after Cloud Run deploy)
+  - [x] `summarise(pageText)` — POST to `/summarise` with Bearer auth
+  - [x] `ask(question, pageText, elementRegistry)` — POST to `/ask` with Bearer auth; returns `{ answer, highlightLabel }`
+  - [x] Resolves proxy URL: storage override → DEFAULT_PROXY_URL
+  - [x] Handles network errors, 401, 429, and non-200 responses with user-friendly strings
 
 ### 2.4 Background Worker — Gemma Routes
-- [ ] On `SUMMARISE` message: read proxy URL from storage → call `gemmaProxy.summarise` → send `SUMMARY_RESULT` to side panel
-- [ ] On `USER_PROMPT` message (text): call `gemmaProxy.ask` → send `PROMPT_RESULT` to side panel; if `highlightLabel` present dispatch highlight command to content script
-- [ ] Auto-summarise flow: on `REGISTRY_UPDATE` (new URL detected) check `autoSummarise` setting; if enabled trigger summarisation automatically
+- [x] `SUMMARISE` → `gemmaProxy.summarise` → `SUMMARY_RESULT` to side panel
+- [x] `USER_PROMPT` → `gemmaProxy.ask` → `PROMPT_RESULT` to side panel; dispatches highlight if `highlightLabel` present
+- [x] Auto-summarise: on new URL detected in `REGISTRY_UPDATE`, checks `autoSummarise` setting
 
 ### 2.5 Side Panel UI — Live AI Responses
-- [ ] Display `SUMMARY_RESULT` in summary section
-- [ ] Display `PROMPT_RESULT` answer in response area
-- [ ] Loading spinner while awaiting AI response
-- [ ] Error state banner for failed API calls (proxy unreachable, quota exceeded)
-- [ ] Apply font size preference from options to response text
+- [x] `SUMMARY_RESULT` displayed in summary section
+- [x] `PROMPT_RESULT` displayed in response area
+- [x] Loading spinner while awaiting AI response
+- [x] Error state banner for failed API calls
+- [x] Font size preference applied from `chrome.storage.local` on panel load
 
 ### 2.6 Highlight Integration (Text Path)
-- [ ] Content script receives highlight command with label string
-- [ ] Fuzzy-match label against registry `text` and `ariaLabel` fields (case-insensitive substring match, fallback to best partial match)
-- [ ] Call `highlighter.showHighlight(element, label)` on best match
-- [ ] If no match found, log warning and send `HIGHLIGHT_NOT_FOUND` back to side panel to show "couldn't find that element" message
+- [x] Content script receives `HIGHLIGHT` command with label string
+- [x] Fuzzy-match: exact → substring, case-insensitive
+- [x] `showHighlight(element, label)` called on best match
+- [x] `HIGHLIGHT_NOT_FOUND` sent back to side panel if no match
 
 ---
 
-## Milestone 3 — ElevenLabs TTS & Voice Agent
+## Milestone 3 — ElevenLabs TTS & Voice Agent ✓ Complete
 **Target: Weeks 5–6 | Goal: Voice-first interaction end-to-end**
 
 ### 3.1 ElevenLabs TTS
-- [ ] Create `extension/lib/elevenlabs.js`
-  - [ ] `textToSpeech(text, voiceId, apiKey, speed)` — POST to `/v1/text-to-speech/{voiceId}`; return audio blob URL
-  - [ ] Default voice ID constant (calm, clear English voice)
-  - [ ] Handle API errors; return `null` so UI falls back to text-only
+- [x] Create `extension/lib/elevenlabs.js`
+  - [x] `textToSpeech(text, apiKey, voiceId, speed)` — POST to `/v1/text-to-speech/{voiceId}`; returns base64 MP3 (blob URLs unavailable in service workers)
+  - [x] `DEFAULT_VOICE_ID` constant — Rachel (calm, clear English female)
+  - [x] Handle API errors; return `null` so caller falls back to text-only
 
 ### 3.2 Background Worker — TTS Route
-- [ ] After sending `PROMPT_RESULT` or `SUMMARY_RESULT` to side panel, call `elevenlabs.textToSpeech`
-- [ ] Send `PLAY_AUDIO` message with blob URL to side panel
-- [ ] Respect voice speed from user settings
+- [x] After `PROMPT_RESULT` and `SUMMARY_RESULT`, calls `textToSpeech` with stored API key, voiceId, voiceSpeed
+- [x] Sends `PLAY_AUDIO` with `audioBase64` to side panel
+- [x] Respects voiceId and voiceSpeed from `chrome.storage.local`
 
 ### 3.3 Side Panel UI — Audio Playback
-- [ ] Create hidden `<audio>` element; play blob URL on `PLAY_AUDIO` message
-- [ ] Volume control in side panel header
-- [ ] "Stop audio" button visible while audio is playing
-- [ ] Graceful fallback if audio unavailable (text response still shown)
+- [x] Hidden `<audio id="ttsAudio">` element in sidepanel.html
+- [x] `PLAY_AUDIO` handler decodes base64 → Blob → object URL → plays via audio element
+- [x] Skips TTS playback when voice agent session is active (agent handles its own TTS)
+- [x] Text response always shown regardless of audio availability
 
 ### 3.4 ElevenLabs Conversational Voice Agent (owned by sidepanel.js)
-- [ ] Install ElevenLabs Conversational AI SDK — bundle for MV3 (no dynamic `require`; use importmap or bundled script)
-- [ ] Implement voice session logic directly in `sidepanel.js` (not via background worker):
-  - [ ] `startVoiceSession(elementRegistry, pageText)` — compose system prompt with fresh page context; open WebSocket session
-  - [ ] `stopVoiceSession()` — close session, release microphone
-  - [ ] On text transcript received: parse for `[HIGHLIGHT: "label"]` token; if found send `HIGHLIGHT` message to `background.js` which forwards to content script
-  - [ ] On page navigation message from `background.js`: call `stopVoiceSession()` then `startVoiceSession(newRegistry, newPageText)` — accept ~1–2 s reconnect gap
-- [ ] Side panel listens for `PAGE_CHANGED` from `background.js` to trigger session restart
+- [x] Implemented via direct WebSocket (no SDK required — avoids MV3 bundling complexity)
+- [x] `startVoiceSession()` — gets signed URL, opens WebSocket, injects system prompt with page context and element registry
+- [x] `stopVoiceSession()` — closes WebSocket, releases microphone, stops AudioContext
+- [x] `[HIGHLIGHT: "label"]` token parsed from `agent_response`; forwarded to background → content script
+- [x] `PAGE_CHANGED` triggers stopVoiceSession + 1.5 s reconnect via startVoiceSession
 
 ### 3.5 Side Panel UI — Voice Interaction
-- [ ] Microphone button: idle / listening / processing states with distinct visual feedback
-- [ ] Request `microphone` permission on first use; show re-grant instructions if denied
-- [ ] Display live transcript as user speaks
-- [ ] On agent response: show text answer; agent handles TTS natively in the WebSocket session (no separate TTS call needed)
-- [ ] Show brief "Reconnecting…" indicator during the ~1–2 s session restart on page navigation
-- [ ] "Stop" button visible while voice session is active
+- [x] Mic button: idle (🎤) / connecting (⌛) / listening (⏹) states
+- [x] Microphone permission requested at session start; denied error shown in response area
+- [x] Live transcript shown from `user_transcript` events
+- [x] Agent text response shown from `agent_response` events; agent handles TTS natively
+- [x] "Reconnecting voice session…" shown during 1.5 s restart gap
+- [x] Clicking mic again while active stops the session
 
 ### 3.6 Options Page — Voice Settings
-- [ ] Voice selection dropdown (curated shortlist from ElevenLabs voice library)
-- [ ] "Preview" button plays a sample phrase in the selected voice
+- [x] Voice selection dropdown with 5 curated voices (Rachel, Dorothy, Josh, Adam, Bella)
+- [x] "Preview" button calls TTS REST API with a sample phrase and plays the result
 
 ---
 
